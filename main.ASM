@@ -12,8 +12,11 @@ section '.data' data readable writable
         enterFnMsg db 'Enter first operand: ', 0
         enterSnMsg db 'Enter second operand: ', 0
 
-        enterActionMsg db 'Enter operator (supported: + - *): ', 0
+        enterActionMsg db 'Enter operator (supported: + - * /): ', 0
         wrongActionMsg db 'This action does not supported yet =(', 0
+
+        emptyStr db '%d', 0
+        pointStr db ',', 0
 
         resStr db 'Result: %d', 0
 
@@ -22,14 +25,16 @@ section '.data' data readable writable
         formatStr db ' %s', 0
         formatNum db ' %d', 0
         formatFloat db ' %f', 0
-        ;spaceStr db ' %d', 0
 
 
         fnum dd ?
         snum dd ?
+        rest dd ?
         result dd ?
 
-        NULL = 0
+        NULL equ 0
+        SIGNS equ 3 ; signs after the comma
+
 
 
 
@@ -57,6 +62,10 @@ section '.code' code readable executable
               push [format]
               call [scanf]
               ret
+        endp
+
+        proc endl
+             stdcall print, endlStr, 0
         endp
 
 
@@ -108,12 +117,48 @@ section '.code' code readable executable
                         mov eax, [fnum]
                         div [snum]
                         mov [result], eax
-                        jmp res
+                        mov [rest], edx
+
+                        stdcall print, endlStr, 0
+                        push [result]
+                        push resStr
+                        call [printf]
+
+                        mov edx, [rest]
+                        cmp edx, 0
+                        je exit
+
+                        stdcall print, pointStr, 0
+
+                        mov ebx, 0
+                        divlp:
+                                mov edx, 0 ; reset the rest
+                                mov eax, [rest]
+                                imul eax, 10
+                                div [snum]
+
+                                push eax
+                                push emptyStr
+                                call [printf]
+
+                                mov [rest], edx
+
+
+                                inc ebx
+                                cmp ebx, SIGNS
+                        jne divlp
+
+                        stdcall print, endlStr, 0
+
+                        jmp exit
 
 
                 wrongAction:
                         stdcall print, wrongActionMsg, 1
                         jmp exit
+
+
+
         res:
                 stdcall print, endlStr, 0
                 push [result]
