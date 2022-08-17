@@ -14,6 +14,7 @@ section '.data' data readable writable
 
         enterActionMsg db 'Enter operator (supported: + - * /): ', 0
         wrongActionMsg db 'This action does not supported yet =(', 0
+        continueMsg db 'Do you want to continue (Y/N)?', 0
 
         emptyStr db '%d', 0
         pointStr db ',', 0
@@ -33,7 +34,7 @@ section '.data' data readable writable
         result dd ?
 
         NULL equ 0
-        SIGNS equ 3 ; signs after the comma
+        DECIMAL_PLACES equ 3
 
 
 
@@ -68,17 +69,10 @@ section '.code' code readable executable
              stdcall print, endlStr, 0
         }
 
-
-
-        start:
-                stdcall print, titleMsg, 1
-
+        mainlp:
+                endl
                 stdcall input, enterFnMsg, fnum, formatNum
                 stdcall input, enterSnMsg, snum, formatNum
-
-
-
-
 
                 stdcall print, enterActionMsg, 0
                 call [getch]
@@ -113,7 +107,7 @@ section '.code' code readable executable
                         jmp res
 
                 divide:
-                        mov edx, 0
+                        mov edx, 0 ; reset the rest
                         mov eax, [fnum]
                         div [snum]
                         mov [result], eax
@@ -126,7 +120,7 @@ section '.code' code readable executable
 
                         mov edx, [rest]
                         cmp edx, 0
-                        je exit
+                        je askcontinue
 
                         stdcall print, pointStr, 0
 
@@ -145,23 +139,38 @@ section '.code' code readable executable
 
 
                                 inc ebx
-                                cmp ebx, SIGNS
+                                cmp ebx, DECIMAL_PLACES
                         jne divlp
 
-                        jmp exit
+                        jmp askcontinue
 
 
                 wrongAction:
                         stdcall print, wrongActionMsg, 1
+
+                askcontinue:
+                        endl
+                        stdcall print, continueMsg, 0
+                        call [getch]
+                        cmp eax, 89
+                        je mainlp
                         jmp exit
 
 
+
+        start:
+                stdcall print, titleMsg, 1
+
+
+
+                jmp mainlp
 
         res:
                 endl
                 push [result]
                 push resStr
                 call [printf]
+                jmp askcontinue
 
         exit:
                 endl
