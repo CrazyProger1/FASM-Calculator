@@ -176,9 +176,6 @@ section '.code' code readable executable
 
         start:
                 stdcall print, titleMsg, 1
-
-
-
                 jmp mainlp
 
         res:
@@ -194,13 +191,6 @@ section '.code' code readable executable
                 call [getch]
                 push NULL
                 call [ExitProcess]
-
-
-
-
-
-
-
 
 
 
