@@ -64,9 +64,9 @@ section '.code' code readable executable
               ret
         endp
 
-        proc endl
+        macro endl{
              stdcall print, endlStr, 0
-        endp
+        }
 
 
 
@@ -119,7 +119,7 @@ section '.code' code readable executable
                         mov [result], eax
                         mov [rest], edx
 
-                        stdcall print, endlStr, 0
+                        endl
                         push [result]
                         push resStr
                         call [printf]
@@ -148,8 +148,6 @@ section '.code' code readable executable
                                 cmp ebx, SIGNS
                         jne divlp
 
-                        stdcall print, endlStr, 0
-
                         jmp exit
 
 
@@ -160,13 +158,13 @@ section '.code' code readable executable
 
 
         res:
-                stdcall print, endlStr, 0
+                endl
                 push [result]
                 push resStr
                 call [printf]
-                stdcall print, endlStr, 0
 
         exit:
+                endl
                 stdcall print, exitMsg, 0
                 call [getch]
                 push NULL
