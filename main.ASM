@@ -9,19 +9,20 @@ section '.data' data readable writable
         titleMsg db 'Calculator V1.0 by @crazyproger1', 0
         exitMsg db 'To exit press any key...', 0
 
-        enterFnMsg db 'Enter first num: ', 0
-        enterSnMsg db 'Enter second num: ', 0
+        enterFnMsg db 'Enter first operand: ', 0
+        enterSnMsg db 'Enter second operand: ', 0
 
-        enterActionMsg db 'Enter action (supported: + -): ', 0
+        enterActionMsg db 'Enter operator (supported: + -): ', 0
         wrongActionMsg db 'This action does not supported yet =(', 0
 
         resStr db 'Result: %d', 0
 
         endlStr db 0Dh, 0Ah ,0
 
-        formatStr db '%s', 0
-        formatNum db '%d', 0
-        spaceStr db ' %d', 0
+        formatStr db ' %s', 0
+        formatNum db ' %d', 0
+        formatFloat db ' %f', 0
+        ;spaceStr db ' %d', 0
 
 
         fnum dd ?
@@ -63,8 +64,8 @@ section '.code' code readable executable
         start:
                 stdcall print, titleMsg, 1
 
-                stdcall input, enterFnMsg, fnum, spaceStr
-                stdcall input, enterSnMsg, snum, spaceStr
+                stdcall input, enterFnMsg, fnum, formatNum
+                stdcall input, enterSnMsg, snum, formatNum
 
 
 
@@ -74,26 +75,34 @@ section '.code' code readable executable
                 call [getch]
 
                 cmp eax, 43
-                jne notPlus
+                je plus
+                cmp eax, 45
+                je minus
+
+                jmp wrongAction
+
+                plus:
                         mov ecx, [fnum]
                         add ecx, [snum]
                         mov [result], ecx
-
                         jmp res
 
 
 
-                notPlus:
-                cmp eax, 45
-                jne notMinus
+                minus:
                         mov ecx, [fnum]
                         sub ecx, [snum]
                         mov [result], ecx
-
-
                         jmp res
 
-                notMinus:
+                multiply:
+                        mov ecx, [fnum]
+                        sub ecx, [snum]
+                        mov [result], ecx
+                        jmp res
+
+
+                wrongAction:
                         stdcall print, wrongActionMsg, 1
                         jmp exit
         res:
