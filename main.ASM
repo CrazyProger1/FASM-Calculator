@@ -15,6 +15,7 @@ section '.data' data readable writable
         enterActionMsg db 'Enter operator (supported: + - * /): ', 0
         wrongActionMsg db 'This action does not supported yet =(', 0
         continueMsg db 'Do you want to continue (Y/N)?', 0
+        zeroDivMsg db "Can't divide by zero!!", 0
 
         emptyStr db '%d', 0
         pointStr db ',', 0
@@ -108,6 +109,10 @@ section '.code' code readable executable
                         jmp res
 
                 divide:
+                        mov eax, [snum]
+                        cmp eax, NULL
+                        je divbyzero
+
                         mov edx, 0 ; reset the rest
                         mov eax, [fnum]
                         div [snum]
@@ -149,6 +154,9 @@ section '.code' code readable executable
                 wrongaction:
                         endl
                         stdcall print, wrongActionMsg, 1
+                divbyzero:
+                        endl
+                        stdcall print, zeroDivMsg, 1
 
                 askcontinue:
                         endl
@@ -157,6 +165,7 @@ section '.code' code readable executable
                         cmp eax, 89
                         je mainlp
                         jmp exit
+
 
 
 
