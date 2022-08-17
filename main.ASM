@@ -71,6 +71,7 @@ section '.code' code readable executable
 
         mainlp:
                 endl
+                endl
                 stdcall input, enterFnMsg, fnum, formatNum
                 stdcall input, enterSnMsg, snum, formatNum
 
@@ -86,7 +87,7 @@ section '.code' code readable executable
                 cmp eax, 47
                 je divide
 
-                jmp wrongAction
+                jmp wrongaction
 
                 plus:
                         mov ecx, [fnum]
@@ -145,7 +146,8 @@ section '.code' code readable executable
                         jmp askcontinue
 
 
-                wrongAction:
+                wrongaction:
+                        endl
                         stdcall print, wrongActionMsg, 1
 
                 askcontinue:
