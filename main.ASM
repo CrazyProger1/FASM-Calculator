@@ -151,12 +151,17 @@ section '.code' code readable executable
                         jmp askcontinue
 
 
-                wrongaction:
-                        endl
-                        stdcall print, wrongActionMsg, 1
+
+
                 divbyzero:
                         endl
                         stdcall print, zeroDivMsg, 1
+                        jmp askcontinue
+
+                wrongaction:
+                        endl
+                        stdcall print, wrongActionMsg, 1
+                        jmp askcontinue
 
                 askcontinue:
                         endl
