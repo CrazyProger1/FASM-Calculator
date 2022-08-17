@@ -6,7 +6,7 @@ entry start
 include 'win32a.inc'
 
 section '.data' data readable writable
-        titleMsg db 'Calculator V1.0 by @crazyproger1', 0
+        titleMsg db 'Calculator V0.1 by @crazyproger1', 0
         exitMsg db 'To exit press any key...', 0
 
         enterFnMsg db 'Enter first operand: ', 0
@@ -78,6 +78,8 @@ section '.code' code readable executable
                 je plus
                 cmp eax, 45
                 je minus
+                cmp eax, 42
+                je multiply
 
                 jmp wrongAction
 
@@ -97,7 +99,7 @@ section '.code' code readable executable
 
                 multiply:
                         mov ecx, [fnum]
-                        sub ecx, [snum]
+                        imul ecx, [snum]
                         mov [result], ecx
                         jmp res
 
