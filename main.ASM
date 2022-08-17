@@ -12,7 +12,7 @@ section '.data' data readable writable
         enterFnMsg db 'Enter first operand: ', 0
         enterSnMsg db 'Enter second operand: ', 0
 
-        enterActionMsg db 'Enter operator (supported: + -): ', 0
+        enterActionMsg db 'Enter operator (supported: + - *): ', 0
         wrongActionMsg db 'This action does not supported yet =(', 0
 
         resStr db 'Result: %d', 0
@@ -74,12 +74,14 @@ section '.code' code readable executable
                 stdcall print, enterActionMsg, 0
                 call [getch]
 
-                cmp eax, 43
+                cmp eax, 43 ; check if input char is +
                 je plus
-                cmp eax, 45
+                cmp eax, 45 ; check if input char is -
                 je minus
-                cmp eax, 42
+                cmp eax, 42 ; check if input char is *
                 je multiply
+                cmp eax, 47
+                je divide
 
                 jmp wrongAction
 
@@ -88,8 +90,6 @@ section '.code' code readable executable
                         add ecx, [snum]
                         mov [result], ecx
                         jmp res
-
-
 
                 minus:
                         mov ecx, [fnum]
@@ -101,6 +101,13 @@ section '.code' code readable executable
                         mov ecx, [fnum]
                         imul ecx, [snum]
                         mov [result], ecx
+                        jmp res
+
+                divide:
+                        mov edx, 0
+                        mov eax, [fnum]
+                        div [snum]
+                        mov [result], eax
                         jmp res
 
 
